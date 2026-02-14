@@ -22,121 +22,63 @@
         }
 
         .header {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: var(--header-height);
-            background-color: var(--primary-red);
-            color: white;
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background-color: var(--primary-red); color: white;
             display: flex; align-items: center; justify-content: center;
-            font-size: 22px; font-weight: bold;
-            z-index: 1000;
+            font-size: 22px; font-weight: bold; z-index: 1000;
             box-shadow: 0 4px 10px rgba(0,0,0,0.1);
         }
 
         .add-fab {
-            position: fixed;
-            bottom: 30px; right: 20px;
-            width: 60px; height: 60px;
-            background-color: var(--primary-red);
-            color: white; border-radius: 50%;
+            position: fixed; bottom: 30px; right: 20px; width: 60px; height: 60px;
+            background-color: var(--primary-red); color: white; border-radius: 50%;
             display: flex; align-items: center; justify-content: center;
             font-size: 28px; text-decoration: none;
-            box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4);
-            z-index: 999;
+            box-shadow: 0 4px 15px rgba(198, 40, 40, 0.4); z-index: 999;
             transition: 0.2s;
         }
         .add-fab:active { transform: scale(0.9); }
 
         .search-container {
-            position: fixed;
-            top: var(--header-height);
-            left: 0; width: 100%;
-            background: white;
-            padding: 12px 0;
-            z-index: 998;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
-            display: flex; justify-content: center;
+            position: fixed; top: var(--header-height); left: 0; width: 100%;
+            background: white; padding: 12px 0; z-index: 998;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05); display: flex; justify-content: center;
         }
-        .search-box {
-            width: 90%; max-width: 600px;
-            position: relative;
-        }
+        .search-box { width: 90%; max-width: 600px; position: relative; }
         .search-box input {
-            width: 100%; padding: 12px 45px 12px 20px;
-            border: 2px solid #eee; border-radius: 30px;
-            font-family: 'Sarabun'; box-sizing: border-box;
-            outline: none; font-size: 15px;
-            transition: 0.3s;
+            width: 100%; padding: 12px 45px 12px 20px; border: 2px solid #eee; border-radius: 30px;
+            font-family: 'Sarabun'; box-sizing: border-box; outline: none; font-size: 15px; transition: 0.3s;
         }
         .search-box input:focus { border-color: var(--primary-red); }
-        .search-box i {
-            position: absolute; right: 18px; top: 15px; color: #999;
-        }
+        .search-box i { position: absolute; right: 18px; top: 15px; color: #999; }
 
-        .container {
-            max-width: 700px;
-            margin: 0 auto;
-            padding: 0 15px 100px;
-        }
+        .container { max-width: 700px; margin: 0 auto; padding: 0 15px 100px; }
 
         .data-card {
-            background: white;
-            border-radius: 15px;
-            padding: 18px;
-            margin-bottom: 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
-            border-left: 6px solid var(--primary-red);
-            transition: 0.2s;
+            background: white; border-radius: 15px; padding: 18px; margin-bottom: 15px;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05); border-left: 6px solid var(--primary-red);
         }
 
         .card-info { flex-grow: 1; padding-right: 10px; }
-        
         .card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
-        .card-id { 
-            font-size: 11px; color: #666; font-weight: bold; 
-            background: #f0f0f0; padding: 3px 8px; border-radius: 5px;
-        }
-        .card-date-badge {
-            font-size: 11px; color: white; background: #555;
-            padding: 3px 8px; border-radius: 5px; font-weight: bold;
-        }
+        .card-id { font-size: 11px; color: #666; font-weight: bold; background: #f0f0f0; padding: 3px 8px; border-radius: 5px; }
+        .card-date-badge { font-size: 11px; color: white; background: #555; padding: 3px 8px; border-radius: 5px; font-weight: bold; }
 
-        .card-title { 
-            font-size: 19px; font-weight: bold; color: #222; margin: 5px 0; 
-        }
+        .card-title { font-size: 19px; font-weight: bold; color: #222; margin: 5px 0; }
         .card-detail { font-size: 14px; color: #666; display: flex; align-items: center; gap: 10px; }
         .card-detail i { color: #999; width: 14px; }
         .card-detail span.plot { color: var(--primary-red); font-weight: bold; }
 
         .action-buttons { display: flex; gap: 10px; }
-
-        .edit-icon-btn {
-            width: 45px; height: 45px;
-            background: #fff5f5;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: var(--primary-red);
-            text-decoration: none;
-            font-size: 20px;
-            transition: 0.2s;
+        .edit-icon-btn, .delete-icon-btn {
+            width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center;
+            text-decoration: none; font-size: 20px; transition: 0.2s; border: none; cursor: pointer;
         }
-
-        .delete-icon-btn {
-            width: 45px; height: 45px;
-            background: #f0f0f0;
-            border-radius: 10px;
-            display: flex; align-items: center; justify-content: center;
-            color: #888;
-            border: none;
-            cursor: pointer;
-            font-size: 20px;
-            transition: 0.2s;
-        }
-        .delete-icon-btn:hover { background: #e0e0e0; color: #d32f2f; }
+        .edit-icon-btn { background: #fff5f5; color: var(--primary-red); }
+        .delete-icon-btn { background: #f0f0f0; color: #888; }
         .edit-icon-btn:hover { background: var(--primary-red); color: white; }
+        .delete-icon-btn:hover { background: #e0e0e0; color: #d32f2f; }
 
         .loading-text { text-align: center; padding: 50px; color: #888; font-size: 16px; }
     </style>
@@ -158,9 +100,7 @@
     </div>
 </div>
 
-<a href="add.html" class="add-fab">
-    <i class="fa-solid fa-plus"></i>
-</a>
+<a href="add.html" class="add-fab"><i class="fa-solid fa-plus"></i></a>
 
 <script>
     const SUPABASE_URL = 'https://cpykhtqiqvwpqwyicgpp.supabase.co';
@@ -172,17 +112,17 @@
     async function loadData() {
         const listContainer = document.getElementById('card-list');
         try {
+            // ดึงข้อมูลและเรียงลำดับตาม created_at (ล่าสุดขึ้นก่อน)
             const { data, error } = await _supabase
                 .from('SITE_INFO')
                 .select('*')
-                .order('date', { ascending: false });
+                .order('created_at', { ascending: false });
 
             if (error) throw error;
             allData = data;
             renderCards(allData);
 
         } catch (err) {
-            console.error('Error:', err);
             listContainer.innerHTML = `<div class="loading-text" style="color:red;">❌ ไม่สามารถโหลดข้อมูลได้: ${err.message}</div>`;
         }
     }
@@ -190,6 +130,7 @@
     function formatDate(dateStr) {
         if (!dateStr) return "-";
         const d = new Date(dateStr);
+        // แสดงผลวันที่แบบไทย (วันที่/เดือน/ปีพ.ศ.)
         return d.toLocaleDateString('th-TH', { day: '2-digit', month: '2-digit', year: 'numeric' });
     }
 
@@ -204,13 +145,12 @@
 
         data.forEach(item => {
             const targetId = item.idinfo;
-
             const card = document.createElement('div');
             card.className = 'data-card';
             card.innerHTML = `
                 <div class="card-info">
                     <div class="card-top">
-                        <span class="card-date-badge"><i class="fa-regular fa-calendar"></i> ${formatDate(item.date)}</span>
+                        <span class="card-date-badge"><i class="fa-regular fa-calendar"></i> ${formatDate(item.created_at)}</span>
                         <span class="card-id">ID: ${targetId}</span>
                     </div>
                     <div class="card-title">${item.village_name}</div>
@@ -220,10 +160,10 @@
                     </div>
                 </div>
                 <div class="action-buttons">
-                    <a href="edit.html?id=${encodeURIComponent(targetId)}" class="edit-icon-btn" title="แก้ไข">
+                    <a href="edit.html?id=${encodeURIComponent(targetId)}" class="edit-icon-btn">
                         <i class="fa-solid fa-pen-to-square"></i>
                     </a>
-                    <button onclick="deleteItem('${targetId}', '${item.village_name}', '${item.plot_no}')" class="delete-icon-btn" title="ลบ">
+                    <button onclick="deleteItem('${targetId}', '${item.village_name}', '${item.plot_no}')" class="delete-icon-btn">
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
@@ -232,56 +172,31 @@
         });
     }
 
-    // ฟังก์ชันลบข้อมูลแบบครอบคลุมทั้ง DB และ Storage
     async function deleteItem(id, village, plot) {
-        const confirmMsg = `⚠️ ยืนยันการลบข้อมูลทั้งหมด?\nหมู่บ้าน: ${village}\nแปลง: ${plot}\n\n* ข้อมูลในระบบและรูปภาพใน Storage ทั้งหมดจะถูกลบถาวร`;
-        
-        if (confirm(confirmMsg)) {
+        if (confirm(`ยืนยันการลบข้อมูลทั้งหมด?`)) {
             try {
-                // 1. ดึงรายการหมวดหมู่ (Sections) ทั้งหมดที่มีรูปภาพในโฟลเดอร์ ID นี้
-                const sections = [
-                    "01-U-G", "02-A-S", "03-ACMH", "04-SC", "05-CMB", 
-                    "06-LLS", "07-TIL", "08-CEI", "09-ELE", "10-SAN", "11-CONC"
-                ];
-
-                // 2. วนลูปลบไฟล์ใน Storage ทีละโฟลเดอร์หมวดหมู่
+                // ลบรูปภาพใน Storage
+                const sections = ["01-U-G", "02-A-S", "03-ACMH", "04-SC", "05-CMB", "06-LLS", "07-TIL", "08-CEI", "09-ELE", "10-SAN", "11-CONC"];
                 for (const section of sections) {
                     const folderPath = `${id}/${section}`;
                     const { data: files } = await _supabase.storage.from('pic').list(folderPath);
-                    
                     if (files && files.length > 0) {
                         const filesToDelete = files.map(f => `${folderPath}/${f.name}`);
                         await _supabase.storage.from('pic').remove(filesToDelete);
                     }
                 }
-
-                // 3. ลบข้อมูลใน Database (ไล่จากตารางลูกขึ้นไปหาตารางแม่)
-                // ดึงรายการไอเทมทั้งหมดภายใต้ idinfo นี้
+                // ลบข้อมูลใน DB
                 const { data: items } = await _supabase.from('INSPECTION_ITEMS').select('id').eq('idinfo', id);
-                
                 if (items && items.length > 0) {
-                    const itemIds = items.map(it => it.id);
-                    // ลบรูปภาพในตาราง INSPECTION_IMAGES
-                    await _supabase.from('INSPECTION_IMAGES').delete().in('item_id', itemIds);
+                    await _supabase.from('INSPECTION_IMAGES').delete().in('item_id', items.map(it => it.id));
                 }
-                
-                // ลบรายการในตาราง INSPECTION_ITEMS
                 await _supabase.from('INSPECTION_ITEMS').delete().eq('idinfo', id);
-                
-                // ลบข้อมูลหลักในตาราง SITE_INFO
-                const { error: dbError } = await _supabase
-                    .from('SITE_INFO')
-                    .delete()
-                    .eq('idinfo', id);
+                await _supabase.from('SITE_INFO').delete().eq('idinfo', id);
 
-                if (dbError) throw dbError;
-
-                alert('ลบรายการในระบบเรียบร้อย');
-                loadData(); 
-
+                alert('ลบเรียบร้อย');
+                loadData();
             } catch (err) {
-                console.error('Delete error:', err);
-                alert('เกิดข้อผิดพลาดในการลบ: ' + err.message);
+                alert('Error: ' + err.message);
             }
         }
     }
@@ -289,16 +204,15 @@
     function filterData() {
         const searchTerm = document.getElementById('searchInput').value.toLowerCase();
         const filtered = allData.filter(item => 
-            (item.village_name && item.village_name.toLowerCase().includes(searchTerm)) ||
-            (item.plot_no && item.plot_no.toString().toLowerCase().includes(searchTerm)) ||
-            (item.idinfo && item.idinfo.toLowerCase().includes(searchTerm)) ||
-            (item.inspected_by && item.inspected_by.toLowerCase().includes(searchTerm))
+            (item.village_name?.toLowerCase().includes(searchTerm)) ||
+            (item.plot_no?.toString().toLowerCase().includes(searchTerm)) ||
+            (item.idinfo?.toLowerCase().includes(searchTerm)) ||
+            (item.inspected_by?.toLowerCase().includes(searchTerm))
         );
         renderCards(filtered);
     }
 
     window.onload = loadData;
 </script>
-
 </body>
 </html>

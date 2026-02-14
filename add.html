@@ -22,144 +22,91 @@
             padding-top: var(--header-height);
         }
 
-        /* เมื่อกำลังบันทึก จะล็อคไม่ให้คลิกทั้งหน้าจอ */
-        body.is-saving {
-            pointer-events: none;
-        }
+        body.is-saving { pointer-events: none; }
 
         .header {
-            position: fixed;
-            top: 0; left: 0;
-            width: 100%; height: var(--header-height);
-            background-color: var(--primary-red);
-            color: white;
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background-color: var(--primary-red); color: white;
             display: flex; align-items: center; justify-content: center;
-            font-size: 20px; font-weight: bold;
-            z-index: 1000;
+            font-size: 20px; font-weight: bold; z-index: 1000;
             box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        .back-btn {
-            position: absolute;
-            left: 20px; color: white;
-            text-decoration: none; font-size: 25px;
-        }
+        .back-btn { position: absolute; left: 20px; color: white; text-decoration: none; font-size: 25px; }
 
         .container {
-            max-width: 650px;
-            margin: 15px auto 100px;
-            background: white;
-            padding: 20px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            transition: opacity 0.3s;
+            max-width: 650px; margin: 15px auto 100px;
+            background: white; padding: 20px; border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: opacity 0.3s;
         }
 
-        /* จางหน้าจอลงเล็กน้อยเมื่อบันทึก */
         .is-saving .container { opacity: 0.6; }
 
-        .info-grid {
-            display: grid; grid-template-columns: 1fr 1fr;
-            gap: 12px; margin-bottom: 20px;
+        /* ปรับเป็น 3 คอลัมน์เหมือนหน้า Edit */
+        .info-grid { 
+            display: grid; 
+            grid-template-columns: 1fr 1fr 1fr; 
+            gap: 12px; 
+            margin-bottom: 20px; 
         }
+        @media (max-width: 600px) { .info-grid { grid-template-columns: 1fr; } }
 
-        .input-group label {
-            display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px;
-        }
-
+        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
         .req::after { content: " *"; color: red; }
 
-        input[type="text"], input[type="date"] {
-            width: 100%; padding: 10px;
-            border: 1px solid #ccc; border-radius: 8px;
-            box-sizing: border-box; font-family: 'Sarabun';
+        input[type="text"] {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px;
+            box-sizing: border-box; font-family: 'Sarabun'; outline: none;
         }
+        input[type="text"]:focus { border-color: var(--primary-red); }
 
         .section-title {
-            background-color: #333;
-            color: white; padding: 12px;
-            border-radius: 8px;
-            font-weight: bold; margin: 30px 0 15px;
+            background-color: #333; color: white; padding: 12px;
+            border-radius: 8px; font-weight: bold; margin: 30px 0 15px;
             font-size: 15px; border-left: 5px solid var(--primary-red);
         }
 
         .check-item {
-            margin-bottom: 20px; padding: 15px;
-            background: #fdfdfd; border: 1px solid #eee;
-            border-radius: 10px; display: flex; flex-direction: column; align-items: center;
+            margin-bottom: 20px; padding: 15px; background: #fdfdfd;
+            border: 1px solid #eee; border-radius: 10px;
         }
 
-        .check-item p {
-            width: 100%; font-weight: normal; margin-bottom: 12px;
-            font-size: 14px; color: #333; line-height: 1.4;
-        }
-
-        .file-display-area { width: 100%; margin-bottom: 10px; }
-
+        .check-item p { font-weight: normal; margin-bottom: 12px; font-size: 14px; color: #333; line-height: 1.4; }
+        
         .file-item {
-            background: #f0fdf4; 
-            border: 1px solid var(--primary-green); 
-            border-radius: 10px;
-            padding: 10px 15px; 
-            display: flex; 
-            align-items: center;
-            gap: 10px; 
-            width: 100%; 
-            justify-content: space-between; 
-            margin-bottom: 8px;
-            box-sizing: border-box;
-            color: #166534;
-            font-size: 14px;
+            background: #f0fdf4; border: 1px solid var(--primary-green); border-radius: 8px;
+            padding: 8px 12px; display: flex; align-items: center; justify-content: space-between; 
+            margin-bottom: 8px; color: #166534; font-size: 13px;
         }
 
-        .file-item span {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            cursor: pointer;
-            font-weight: 500;
-        }
-
-        .remove-btn {
-            background: none; border: none; color: #ef4444; 
-            font-size: 20px; cursor: pointer; line-height: 1;
-        }
+        .file-item span { display: flex; align-items: center; gap: 8px; cursor: pointer; }
+        .remove-btn { background: none; border: none; color: #ef4444; font-size: 20px; cursor: pointer; }
 
         .add-btn {
-            width: 100%; height: 45px; background-color: #f3f4f6;
-            color: #4b5563; border-radius: 10px; display: flex;
-            align-items: center; justify-content: center; cursor: pointer;
-            border: 1px solid #e5e7eb; font-size: 14px; transition: 0.2s;
+            width: 100%; height: 45px; background-color: #f8f9fa; color: #555;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            gap: 8px; cursor: pointer; border: 1px solid #ddd; font-size: 14px; transition: 0.2s;
+            margin-top: 10px;
         }
-
-        .add-btn:hover { background-color: #e5e7eb; }
+        .add-btn:hover { background-color: #eee; }
 
         .footer-save {
-            position: fixed; bottom: 0; left: 0; width: 100%;
-            padding: 15px; background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1);
-            z-index: 1000; display: flex; justify-content: center;
+            position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px;
+            background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); z-index: 1000;
+            display: flex; justify-content: center;
         }
 
         .save-btn {
-            background-color: var(--primary-red);
-            color: white; border: none; width: 90%; max-width: 600px;
-            padding: 15px; border-radius: 30px;
-            font-size: 18px; font-weight: bold; cursor: pointer;
-            transition: all 0.3s;
+            background-color: var(--primary-red); color: white; border: none; width: 90%;
+            max-width: 600px; padding: 15px; border-radius: 30px; font-size: 18px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
         }
 
-        /* สไตล์ปุ่มตอนบันทึก (สีเทา) */
-        .save-btn:disabled {
-            background-color: #9ca3af !important;
-            cursor: not-allowed;
-            transform: scale(0.98);
-        }
+        .save-btn:disabled { background-color: #9ca3af !important; cursor: not-allowed; }
 
         .modal {
-            display: none; position: fixed; z-index: 2000;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.9);
-            justify-content: center; align-items: center;
+            display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%;
+            background-color: rgba(0,0,0,0.9); justify-content: center; align-items: center;
         }
         .modal-content { max-width: 90%; max-height: 80%; border-radius: 8px; }
         .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
@@ -175,11 +122,9 @@
 <div class="container">
     <div class="info-grid">
         <div class="input-group"><label class="req">หมู่บ้าน:</label><input type="text" id="village_name" placeholder="ชื่อหมู่บ้าน"></div>
-        <div class="input-group"><label class="req">วันที่:</label><input type="date" id="date"></div>
         <div class="input-group"><label class="req">แปลง:</label><input type="text" id="plot_no" placeholder="เลขแปลง"></div>
         <div class="input-group"><label class="req">ผู้ตรวจสอบ:</label><input type="text" id="inspected_by" placeholder="ชื่อผู้ตรวจ"></div>
     </div>
-
     <div id="check-list-container"></div>
 </div>
 
@@ -223,14 +168,13 @@
         section.items.forEach((text, iIdx) => {
             const fileKey = `${sIdx}-${iIdx}`;
             storageFiles[fileKey] = [];
-
             const item = document.createElement('div');
             item.className = 'check-item';
             item.innerHTML = `
                 <p>${text}</p>
-                <div id="display-${fileKey}" class="file-display-area"></div>
+                <div id="display-${fileKey}"></div>
                 <label class="add-btn">
-                    <i class="fa-solid fa-camera"></i> &nbsp; ถ่ายรูป/แนบไฟล์เพิ่ม
+                    <i class="fa-solid fa-camera"></i>ถ่ายรูป/แนบไฟล์รูปภาพ
                     <input type="file" style="display:none" accept="image/*" onchange="attachMultipleFiles(this, '${fileKey}')">
                 </label>
             `;
@@ -240,8 +184,7 @@
 
     function attachMultipleFiles(input, key) {
         if (input.files && input.files[0]) {
-            const file = input.files[0];
-            storageFiles[key].push(file);
+            storageFiles[key].push(input.files[0]);
             renderFiles(key);
             input.value = ""; 
         }
@@ -254,50 +197,45 @@
             const card = document.createElement('div');
             card.className = 'file-item';
             card.innerHTML = `
-                <span onclick="viewFile('${key}', ${index})">
-                    <i class="fa-solid fa-paperclip"></i> ${file.name}
-                </span>
+                <span onclick="viewFile('${key}', ${index})"><i class="fa-solid fa-circle-plus"></i> ${file.name}</span>
                 <button class="remove-btn" onclick="removeFile('${key}', ${index})">&times;</button>
             `;
             display.appendChild(card);
         });
     }
 
-    function removeFile(key, index) {
-        storageFiles[key].splice(index, 1);
-        renderFiles(key);
-    }
+    function removeFile(key, index) { storageFiles[key].splice(index, 1); renderFiles(key); }
 
     async function saveData() {
         const v = document.getElementById('village_name').value.trim();
-        const d = document.getElementById('date').value;
         const p = document.getElementById('plot_no').value.trim();
         const i = document.getElementById('inspected_by').value.trim();
         const btn = document.getElementById('save-btn');
 
-        if (!v || !d || !p || !i) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
+        if (!v || !p || !i) { alert('กรุณากรอกข้อมูลให้ครบถ้วน'); return; }
 
-        // --- เริ่มขั้นตอนการบันทึก (Lock UI) ---
         btn.disabled = true;
         btn.innerText = 'กำลังบันทึก...';
-        document.body.classList.add('is-saving'); // ล็อคปุ่มและการคลิกทั้งหน้าจอ
+        document.body.classList.add('is-saving');
 
         try {
-            const dt = new Date(d);
-            const dateStr = `${String(dt.getDate()).padStart(2,'0')}${String(dt.getMonth()+1).padStart(2,'0')}${dt.getFullYear()}`;
-            const idPrefix = `${dateStr}-${p}`;
+            const now = new Date();
+            const dateStr = `${String(now.getDate()).padStart(2, '0')}${String(now.getMonth() + 1).padStart(2, '0')}${now.getFullYear()}`;
+            const idPrefix = `${p}-${dateStr}`;
 
             const { data: records } = await _supabase.from('SITE_INFO').select('idinfo').ilike('idinfo', `${idPrefix}-%`);
             const nextSeq = records ? records.length + 1 : 1;
             const customId = `${idPrefix}-${nextSeq}`;
 
-            await _supabase.from('SITE_INFO').insert([{ idinfo: customId, village_name: v, date: d, plot_no: p, inspected_by: i }]);
+            const { error: siteErr } = await _supabase.from('SITE_INFO').insert([{ 
+                idinfo: customId, village_name: v, plot_no: p, inspected_by: i 
+            }]);
+            if (siteErr) throw siteErr;
 
             for (let sIdx = 0; sIdx < inspectionData.length; sIdx++) {
                 const section = inspectionData[sIdx];
                 for (let iIdx = 0; iIdx < section.items.length; iIdx++) {
                     const key = `${sIdx}-${iIdx}`;
-                    
                     const { data: itemData, error: itemErr } = await _supabase
                         .from('INSPECTION_ITEMS')
                         .insert([{ idinfo: customId, category: section.table, item_name: section.items[iIdx] }])
@@ -307,20 +245,16 @@
                     const itemId = itemData[0].id;
 
                     const files = storageFiles[key];
-                    for (let fIdx = 0; fIdx < files.length; fIdx++) {
-                        const file = files[fIdx];
+                    for (const file of files) {
                         const safeName = file.name.replace(/[^\x00-\x7F]/g, "_").replace(/\s+/g, "_");
-                        const fileName = `${Date.now()}_${safeName}`;
-                        const path = `${customId}/${section.table}/${fileName}`;
+                        const path = `${customId}/${section.table}/${Date.now()}_${safeName}`;
                         
-                        const { error: uploadErr } = await _supabase.storage.from('pic').upload(path, file);
-                        if (uploadErr) throw uploadErr;
+                        const { error: upErr } = await _supabase.storage.from('pic').upload(path, file);
+                        if (upErr) throw upErr;
 
                         const { data: urlData } = _supabase.storage.from('pic').getPublicUrl(path);
-
                         await _supabase.from('INSPECTION_IMAGES').insert([{
-                            item_id: itemId,
-                            image_url: urlData.publicUrl
+                            item_id: itemId, image_url: urlData.publicUrl
                         }]);
                     }
                 }
@@ -328,10 +262,8 @@
 
             alert('บันทึกสำเร็จ!');
             window.location.href = 'index.html';
-
         } catch (err) {
             alert('Error: ' + err.message);
-            // กรณีเกิดข้อผิดพลาด ให้ปลดล็อคเพื่อให้ผู้ใช้แก้ไขได้
             btn.disabled = false;
             btn.innerText = 'บันทึกข้อมูลทั้งหมด';
             document.body.classList.remove('is-saving');

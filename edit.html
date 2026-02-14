@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แก้ไขข้อมูลการตรวจงาน</title>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <style>
+        :root { --primary-red: #c62828; --bg-gray: #f0f0f0; --header-height: 80px; }
+        body { font-family: 'Sarabun', sans-serif; background-color: var(--bg-gray); margin: 0; padding-top: var(--header-height); }
+        
+        .header {
+            position: fixed; top: 0; left: 0; width: 100%; height: var(--header-height);
+            background-color: var(--primary-red); color: white;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 20px; font-weight: bold; z-index: 1000;
+        }
+        .back-btn { position: absolute; left: 20px; color: white; text-decoration: none; font-size: 25px; }
+
+        .container { max-width: 650px; margin: 15px auto 100px; background: white; padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px; }
+        .input-group label { display: block; font-weight: bold; margin-bottom: 5px; font-size: 14px; }
+        input[type="text"], input[type="date"] { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-family: 'Sarabun'; }
+
+        .section-title { background-color: #333; color: white; padding: 12px; border-radius: 8px; font-weight: bold; margin: 30px 0 15px; border-left: 5px solid var(--primary-red); }
+        .check-item { margin-bottom: 20px; padding: 15px; background: #fdfdfd; border: 1px solid #eee; border-radius: 10px; }
+        
+        .file-item {
+            border-radius: 8px; padding: 8px 12px; display: flex; 
+            align-items: center; justify-content: space-between; margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .file-item span { cursor: pointer; display: flex; align-items: center; gap: 8px; }
+
+        .file-item.old { background: #f5f5f5; border: 1px dashed #999; color: #666; }
+        .file-item.old span { text-decoration: underline; }
+
+        .file-item.new { background: #f0fdf4; border: 1px solid #22c55e; color: #166534; }
+        .file-item.new span { font-weight: bold; }
+
+        .add-btn {
+            width: 100%; height: 45px; background-color: #f8f9fa; color: #555;
+            border-radius: 8px; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; border: 1px solid #ddd; font-size: 14px; margin-top: 10px;
+            transition: 0.2s;
+        }
+        .add-btn:hover { background-color: #eee; }
+        .add-btn i { margin-right: 10px; }
+
+        .footer-save { position: fixed; bottom: 0; left: 0; width: 100%; padding: 15px; background: white; box-shadow: 0 -4px 10px rgba(0,0,0,0.1); display: flex; justify-content: center; z-index: 1000; }
+        
+        /* สไตล์ปุ่มบันทึกปกติ */
+        .save-btn { background-color: var(--primary-red); color: white; border: none; width: 90%; max-width: 600px; padding: 15px; border-radius: 30px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; }
+        
+        /* สไตล์ปุ่มเมื่อถูกล็อค (สีเทา) */
+        .save-btn:disabled { background-color: #9ca3af !important; cursor: not-allowed; transform: scale(0.98); }
+
+        /* ล็อคอินพุตทั้งหมดเมื่อกำลังบันทึก */
+        .saving-mode { pointer-events: none; opacity: 0.7; }
+
+        .modal { display: none; position: fixed; z-index: 2000; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.9); justify-content: center; align-items: center; }
+        .modal-content { max-width: 90%; max-height: 80%; border-radius: 8px; }
+        .close-modal { position: absolute; top: 20px; right: 30px; color: white; font-size: 40px; cursor: pointer; }
+    </style>
+</head>
+<body id="main-body">
+
+<div class="header">
+    <a href="index.html" class="back-btn"><i class="fa-solid fa-chevron-left"></i></a>
+    แก้ไขข้อมูลการตรวจงาน
+</div>
+
+<div class="container" id="content-area">
+    <div class="info-grid">
+        <div class="input-group"><label>หมู่บ้าน:</label><input type="text" id="village_name"></div>
+        <div class="input-group"><label>วันที่:</label><input type="date" id="date"></div>
+        <div class="input-group"><label>แปลง:</label><input type="text" id="plot_no"></div>
+        <div class="input-group"><label>ผู้ตรวจสอบ:</label><input type="text" id="inspected_by"></div>
+    </div>
+    <div id="check-list-container"></div>
+</div>
+
+<div class="footer-save">
+    <button class="save-btn" id="save-btn" onclick="saveData()">บันทึกการแก้ไข</button>
+</div>
+
+<div id="imageModal" class="modal">
+    <span class="close-modal" onclick="closeModal()">&times;</span>
+    <img class="modal-content" id="modalImg">
+</div>
+
+<script>
+    const SUPABASE_URL = 'https://cpykhtqiqvwpqwyicgpp.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_158dwjoO6rZ7VHiq-DFKDw_EEFUU8vm';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const targetId = urlParams.get('id');
+
+    const inspectionData = [
+        { table: "01-U-G", title: "Section 1 ขั้นตอนการตรวจงานประปาสุขาภิบาลใต้ดิน", items: ["1. ยี่ห้อท่อpvcสีฟ้าที่ใช้ได้ ท่อน้ำไทยและSCG", "2. Classท่อ น้ำดี Class 13.5 Classท่อ น้ำทิ้ง Class 8.5", "3. ตรวจสอบความลาดเอียงท่อน้ำทิ้ง 1:100", "4. ท่ออากาศออกจากข้องอท่อน้ำทิ้งชักโครกตัวแรกระยะไม่เกิน 1 ม.", "5. แคล้มป์ยึท่อถูกต้องตามตำแหน่ง", "6. ตำแหน่งยึดท่อประปาจากข้องอตัวแรกที่ระยะ 30 ซม.", "7. สับท่อเข้าแนวผนังให้เรียบร้อย", "8. วางท่อประปาแล้วเสร็จ ปิดปากท่อเพื่อป้องกันวัสดุเข้าไปอุดตัน", "9. ทดสอบแรงดันท่อน้ำดี ใช้แรงดันที่ 100 psi"] },
+        { table: "02-A-S", title: "Section 2 ขั้นตอนการตรวจงานประปาสุขาภิบาลใต้ท้องพื้น", items: ["1. ระยะยึดท่อประปาสำหรับท่อขนาด 2.5 นิ้วขึ้นไปไม่เกิน 1.50 ม.", "2. ระยะยึดท่อประปาสำหรับท่อขนาด 2.5 นิ้วลงมาไม่เกิน 1 ม.", "3. วางท่อประปาแล้วเสร็จ ปิดปากท่อเพื่อป้องกันวัสดุเข้าไปอุดตัน"] },
+        { table: "03-ACMH", title: "Section 3 ขั้นตอนการตรวจงานวางท่อใยหินและบ่อพัก", items: ["1. ใส่ทรายก่อนวางท่อ", "2. วางท่อแล้วใส่ทรายบนท่อ", "3. เกร้าท์ปูนรอบท่อและบ่อพัก"] },
+        { table: "04-SC", title: "Section 4 ขั้นตอนการตรวจงานฉาบผิวบางและสี", items: ["1. อุปกรณ์ที่ใช้ ได้แก่ เกรียงโป้วสแตนเลส เกียงฉาบปูน กระดาษทราย สว่านปั่นปูน(หัวเกลียว) ไม้กวาดอ่อน", "2. ทำความสะอาดผิวผนังก่อนและหลังสกิม", "3. สกิมรอบปลั๊กไฟ", "4. สกิมผิวและทาสีเลยระดับฝ้าอย่างน้อย 5 ซม.", "5. ทาสีช่องเปิดก่อนติดตั้งวงกบ และ หน้าต่าง ทาสีอื่นที่ไม่ใช่สีขาว", "6. สกิมสีให้เรียบและขาวเต็มผืน"] },
+        { table: "05-CMB", title: "Section 5 ขั้นตอนการตรวจงานบัวประดับ", items: ["1. ทำความสะอาดพื้นผิวหลังบัวปูน", "2. ติดตั้งก่อนงานสกิมภายนอก", "3. ตีเส้นตรวจสอบไลน์ระดับ", "4. เจาะเสียบเหล็กเสริมของบัว จุดแรกไม่เกิน 20 ซม. ระยะต่อไปไม่เกิน 50 ซม. เจาะเหล็กลึกเข้าผนัง 5 ซม.", "5. กรอกปูนบัวให้เต็มความยาวของบัวใต้ชายหลังคา"] },
+        { table: "06-LLS", title: "Section 6 ขั้นตอนการตรวจงานจับคัน และปรับพื้น", items: ["1. อุปกรณ์ได้แก่ จอบ กระบะทราย เกียงใบโพร์ เรเซอร์ สามเหลี่ยมปาดปูน", "2. ล้างทำความสะอาดก่อนจับคัน", "3. ตัดจากเส้น OFF Mate 1.005 ม.", "4. ระยะจับคัน คันต้องวิ่งรอบห้องระยะห่างต้องไม่เกิน 1.20 ม.", "5. ทำเบิ้ลคันหน้าประตู", "6. เช็คความกว้างช่องบันไดดึงตลับเมตร จากเส้นครูถึงบันไดมีความกว้างเท่ากันหรือไม่", "7. ตรวจสอบระนาบคัน ใช้อลูมิเนียมพาดสามคันและใช้ระดับน้ำพาดบนอลูมิเนียม", "8. ทำความสะอาดหลังจับคันเสร็จ"] },
+        { table: "07-TIL", title: "Section 7 ขั้นตอนการตรวจงานปูกระเบื้อง", items: ["1. อุปกรณ์ที่ใช้ ได้แก่ เกรียงหวี ค้อนยาง ลูกหมู ระดับน้ำ สว่านหัวเกรียว บัวรดน้ำ จอบ กระบะทราย แท่นตัดกระเบื้อง", "2. ทำความสะอาดพื้นที่จะปูกระเบื้อง", "3. ระดับหลังกระเบื้องวัดจาก OFF Mate ลงมา 1.00 ม. และตีเส้นรอบห้องและเส้นฉาก", "4. ขึงเอ็นเสมอระดับหลังกระเบื้อง", "5. พรมน้ำที่พื้นผิวเพื่อช่วยลดอุณหภูมิ และลดการดูดซึมน้ำจากกาวซีเมนต์ไม่ให้แห้ง", "6. ปูกระเบื้อง1รอบ และดึงกระเบื้องออก เพื่อเติมปูนให้เต็มช่องว่าง", "7. เติมปูนที่บริเวณที่ปูนไม่เต็ม", "8. ฉาบปูนกาวเพื่อปูรอบที่ 2 และเขียนลูกศรระบุทิศทางการปู", "9. ใส่ spacers ระยะห่าง 1.5 มม. ปรับระดับกระเบื้องระยะห่างกระเบื้อง เฉลียง และโรงรถ ใช้ 3 มม.", "10. เเคาะกระเบื้องตรวจสอบแผ่นล่อนแผ่นบิ่น แตกหรือไม่", "11. ตรวจสอบการยาแนว ยาแนวให้เต็มร่อง"] },
+        { table: "08-CEI", title: "Section 8 ขั้นตอนการตรวจงานโครงฝ้าและฝ้า", items: ["1. วัสดุยี่ห้อ SCG, Knauf, Gyproc, TOA", "2. ตรวจสอบระดับติดตั้งฉาก ความสูงจาก OFF Mate ตามแบบ", "3. ตรวจสอบระยะสกรูยึดฉาก จุดแรกไม่เกิน 5 ซม. ต่อไปไม่เกิน 30 ซม.", "4. ระยะโครงหลัก จุดแรกจากผนังไม่เกิน 20 ซม. ต่อไปไม่เกิน 100 ซม.", "5. ระยะโครงริมจากผนังไม่เกิน 30 ซม. ต่อไป 80-100 ซม.", "6. ยึดทุกระยะ 40 ซม.", "7. ระยะหิ้วฝ้าไม่เกิน 120 ซม.", "8. ตรวจสอบการยึดสกรูแผ่น 20/30/40 ซม. หัวสกรูต่ำกว่าแผ่น 1 มม.", "9. โครงหลักขนานด้านสั้นของห้อง", "10. อัดแผ่นเข้ามุม โดยใช้แผ่นเต็ม กันรอยร้าว", "11. ตรวจสอบระดับติดตั้งฝ้า"] },
+        { table: "09-ELE", title: "Section 9 ขั้นตอนการตรวจคุณภาพงานไฟฟ้า", items: ["1. ตรวจสอบใบอนุญาตทำงาน", "2. เดินท่อไฟถูกต้องเป็นระเบียบ", "3. ตรวจสอบสายไฟตามแบบ", "4. ต่อสายด้วยวายนัท", "5. เจาะฝ้าติดดวงโคมก่อนทาสี", "6. ตู้โหลดเรียบร้อย", "7. ติดตั้งอุปกรณ์หลังทาสี", "8. แผงทดสอบวงจรหน้าตู้", "9. มาร์คสายไฟก่อนตรวจ", "10. ทดสอบ กราวน์", "11. ทดสอบ แสงสว่าง", "12. ทดสอบ ปลั๊ก", "13. ทดสอบ น้ำอุ่น", "14. ทดสอบ แอร์", "15. ทดสอบ ปั๊มน้ำ", "16. ทดสอบ TV, Lan"] },
+        { table: "10-SAN", title: "Section 10 ขั้นตอนการตรวจงานประปาสุขาภิบาลก่อนติดตั้งสุขภัณฑ์", items: ["1. ล้างท่อน้ำดีก่อนติดตั้ง", "2. ทดสอบท่อน้ำทิ้ง/ชักโครกด้วยลูกปิงปอง 3 ลูก", "3. ติดตั้งสุขภัณฑ์", "4. ทดสอบแรงดันน้ำหลังติดสุขภัณฑ์ 60 psi"] },
+        { table: "11-CONC", title: "Section 11 ขั้นตอนการตรวจงานเทปูนโรงรถ", items: ["1. เข้าแบบ รองพื้นทรายบดอัดแน่น", "2. คลุมพลาสติกใส 0.07 มม.", "3. ปู Wire mesh ซ้อนทับ 40 ซม.", "4. ใส่ลูกปูนหนา 5 ซม.", "5. จี้ปูนขณะเท", "6. กวาดลายหน้าปูน กันแตกร้าว"] }
+    ];
+
+    const storageFiles = {}; 
+    const existingPhotos = {}; 
+    const listContainer = document.getElementById('check-list-container');
+
+    inspectionData.forEach((section, sIdx) => {
+        const sDiv = document.createElement('div');
+        sDiv.className = 'section-title';
+        sDiv.innerText = section.title;
+        listContainer.appendChild(sDiv);
+
+        section.items.forEach((text, iIdx) => {
+            const key = `${sIdx}-${iIdx}`;
+            storageFiles[key] = [];
+            existingPhotos[key] = [];
+
+            const item = document.createElement('div');
+            item.className = 'check-item';
+            item.innerHTML = `
+                <p>${text}</p>
+                <div id="display-${key}"></div>
+                <label class="add-btn">
+                    <i class="fa-solid fa-camera"></i> ถ่ายรูป/แนบไฟล์เพิ่ม
+                    <input type="file" style="display:none" accept="image/*" onchange="addFile(this, '${key}')">
+                </label>
+            `;
+            listContainer.appendChild(item);
+        });
+    });
+
+    async function loadData() {
+        if (!targetId) return alert("ไม่พบ ID ข้อมูล");
+        try {
+            const { data: info } = await _supabase.from('SITE_INFO').select('*').eq('idinfo', targetId).single();
+            if (info) {
+                document.getElementById('village_name').value = info.village_name;
+                document.getElementById('date').value = info.date;
+                document.getElementById('plot_no').value = info.plot_no;
+                document.getElementById('inspected_by').value = info.inspected_by;
+            }
+
+            const { data: items } = await _supabase.from('INSPECTION_ITEMS').select(`id, category, item_name, INSPECTION_IMAGES(image_url)`).eq('idinfo', targetId);
+            if (items) {
+                items.forEach(item => {
+                    const sIdx = inspectionData.findIndex(s => s.table === item.category);
+                    if (sIdx !== -1) {
+                        const iIdx = inspectionData[sIdx].items.indexOf(item.item_name);
+                        if (iIdx !== -1) {
+                            const key = `${sIdx}-${iIdx}`;
+                            if (item.INSPECTION_IMAGES) {
+                                existingPhotos[key] = item.INSPECTION_IMAGES.map(img => ({
+                                    url: img.image_url,
+                                    name: decodeURIComponent(img.image_url.split('/').pop())
+                                }));
+                            }
+                            renderFiles(key);
+                        }
+                    }
+                });
+            }
+        } catch (e) { console.error(e); }
+    }
+
+    function addFile(input, key) {
+        if (input.files[0]) {
+            storageFiles[key].push(input.files[0]);
+            renderFiles(key);
+            input.value = "";
+        }
+    }
+
+    function renderFiles(key) {
+        const div = document.getElementById(`display-${key}`);
+        div.innerHTML = "";
+
+        existingPhotos[key].forEach((img, idx) => {
+            const item = document.createElement('div');
+            item.className = 'file-item old';
+            item.innerHTML = `
+                <span onclick="openModal('${img.url}')"><i class="fa-solid fa-clock-rotate-left"></i> ${img.name}</span>
+                <button onclick="removeOld('${key}',${idx})" style="color:#999; border:none; background:none; cursor:pointer; font-size:18px;">&times;</button>
+            `;
+            div.appendChild(item);
+        });
+
+        storageFiles[key].forEach((file, idx) => {
+            const item = document.createElement('div');
+            item.className = 'file-item new';
+            item.innerHTML = `
+                <span onclick="viewNewFile('${key}', ${idx})"><i class="fa-solid fa-circle-plus"></i>${file.name}</span>
+                <button onclick="removeNew('${key}',${idx})" style="color:#22c55e; border:none; background:none; cursor:pointer; font-size:18px;">&times;</button>
+            `;
+            div.appendChild(item);
+        });
+    }
+
+    function removeOld(key, idx) { existingPhotos[key].splice(idx, 1); renderFiles(key); }
+    function removeNew(key, idx) { storageFiles[key].splice(idx, 1); renderFiles(key); }
+
+    function viewNewFile(key, idx) {
+        const file = storageFiles[key][idx];
+        const reader = new FileReader();
+        reader.onload = (e) => {
+            document.getElementById('modalImg').src = e.target.result;
+            document.getElementById('imageModal').style.display = "flex";
+        };
+        reader.readAsDataURL(file);
+    }
+
+    async function saveData() {
+        const btn = document.getElementById('save-btn');
+        const contentArea = document.getElementById('content-area');
+        
+        // 1. เริ่มสถานะบันทึก: ล็อคปุ่ม, เปลี่ยนสี, ล็อคการพิมพ์
+        btn.disabled = true; 
+        btn.innerText = "กำลังบันทึก...";
+        contentArea.classList.add('saving-mode'); 
+        
+        try {
+            await _supabase.from('SITE_INFO').update({
+                village_name: document.getElementById('village_name').value,
+                date: document.getElementById('date').value,
+                plot_no: document.getElementById('plot_no').value,
+                inspected_by: document.getElementById('inspected_by').value
+            }).eq('idinfo', targetId);
+
+            for (let sIdx = 0; sIdx < inspectionData.length; sIdx++) {
+                for (let iIdx = 0; iIdx < inspectionData[sIdx].items.length; iIdx++) {
+                    const key = `${sIdx}-${iIdx}`;
+                    
+                    let { data: itemData } = await _supabase.from('INSPECTION_ITEMS').select('id').eq('idinfo', targetId).eq('item_name', inspectionData[sIdx].items[iIdx]).single();
+                    let itemId;
+                    
+                    if (!itemData) {
+                        const { data: newItem } = await _supabase.from('INSPECTION_ITEMS').insert([{ idinfo: targetId, category: inspectionData[sIdx].table, item_name: inspectionData[sIdx].items[iIdx] }]).select().single();
+                        itemId = newItem.id;
+                    } else {
+                        itemId = itemData.id;
+                    }
+
+                    await _supabase.from('INSPECTION_IMAGES').delete().eq('item_id', itemId);
+
+                    for (const photo of existingPhotos[key]) {
+                        await _supabase.from('INSPECTION_IMAGES').insert([{ item_id: itemId, image_url: photo.url }]);
+                    }
+
+                    for (const file of storageFiles[key]) {
+                        const safeName = file.name.replace(/[^\x00-\x7F]/g, "_");
+                        const path = `${targetId}/${Date.now()}_${safeName}`;
+                        await _supabase.storage.from('pic').upload(path, file);
+                        const { data: url } = _supabase.storage.from('pic').getPublicUrl(path);
+                        await _supabase.from('INSPECTION_IMAGES').insert([{ item_id: itemId, image_url: url.publicUrl }]);
+                    }
+                }
+            }
+            alert("บันทึกการแก้ไขสำเร็จ!");
+            window.location.href = "index.html";
+        } catch (e) { 
+            alert("เกิดข้อผิดพลาด: " + e.message); 
+            // กรณี Error: คืนสถานะปุ่มและปลดล็อคให้แก้ไขใหม่
+            btn.disabled = false; 
+            btn.innerText = "บันทึกการแก้ไข";
+            contentArea.classList.remove('saving-mode');
+        }
+    }
+
+    function openModal(url) { document.getElementById('modalImg').src = url; document.getElementById('imageModal').style.display = "flex"; }
+    function closeModal() { document.getElementById('imageModal').style.display = "none"; }
+
+    window.onload = loadData;
+</script>
+</body>
+</html>
